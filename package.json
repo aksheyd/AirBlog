@@ -10,12 +10,11 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.1",
-    "@types/swagger-ui-react": "^4.18.3",
     "gsap": "^3.12.5",
-    "next": "15.0.4",
+    "jose": "^5.9.6",
+    "next": "^15.0.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "swagger-ui-react": "^5.18.2"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",

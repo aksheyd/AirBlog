@@ -1,0 +1,43 @@
+openapi: 3.0.0
+info:
+  title: Airport Terminals API
+  description: An OpenAPI definition for accessing airport terminals via IATA
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000/api
+    description: Main
+
+paths:
+  /sfo:
+    get:
+      summary: Get SFO Terminals
+      description: Get terminal information for San Francisco International Airport
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Terminals:
+                    type: array
+                    items:
+                      type: string
+              example:
+                Terminals:
+                  - "Terminal 1"
+                  - "Terminal 2"
+                  - "Terminal 3"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: "Unauthorized access."
