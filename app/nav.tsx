@@ -6,6 +6,7 @@ export default function Nav() {
         { name: "Home", link: "/", external: false },
         { name: "About", link: "/about", external: false },
         { name: "Repo", link: "https://github.com/aksheyd/AirBlog", external: true },
+        { name: "API", link: "/api", external: false },
         { name: "Login", link: "/login", external: false}
     ]
 
