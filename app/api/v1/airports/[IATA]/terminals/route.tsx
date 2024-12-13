@@ -1,5 +1,5 @@
 import { FindTerminals } from '@/app/lib/api/data';
-import { ErrorResponse, InvalidAirport, TerminalsResponse } from '@/app/lib/definitions';
+import { ErrorResponse, TerminalsResponse } from '@/app/lib/definitions';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(

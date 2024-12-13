@@ -3,7 +3,7 @@
 // Declare SwaggerUIBundle on the window object
 declare global {
   interface Window {
-    SwaggerUIBundle: any;
+    SwaggerUIBundle: (options: { url: string; dom_id: string }) => void;
   }
 }
 

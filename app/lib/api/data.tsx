@@ -6,10 +6,8 @@ export async function FindTerminals(reqIATA: string): Promise<NextResponse<Termi
         return NextResponse.json(InvalidIATA, { status: 400 });
     }
 
-    let terminals: TerminalsResponse | undefined;
-    let IATA: string = correctedString(reqIATA);
-
-    terminals = Airports[IATA];
+    const IATA: string = correctedString(reqIATA);
+    const terminals: TerminalsResponse | undefined = Airports[IATA];
 
     if (!terminals) {
         return NextResponse.json(InvalidAirport, { status: 404 });
@@ -58,7 +56,7 @@ const Airports: Record<string, AirportData> = {
 
 function correctedString(input: string): string {
     // FIXME: add string input checking for safety
-    let res: string = input.toUpperCase()
+    const res: string = input.toUpperCase()
 
     return res
 }
