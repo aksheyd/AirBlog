@@ -1,0 +1,85 @@
+openapi: 3.0.3
+info:
+  title: Airport Terminals API
+  description: API to fetch terminal information for airports by their IATA code.
+  version: 1.0.0
+servers:
+  - url: https://air-blog-psi.vercel.app/api/v1
+paths:
+  /airports/{IATA}/terminals:
+    get:
+      summary: Get terminals for a specific airport
+      description: Retrieve all terminals associated with the airport identified by the IATA code.
+      parameters:
+        - name: IATA
+          in: path
+          required: true
+          description: The IATA code of the airport.
+          schema:
+            type: string
+            example: DTW
+      responses:
+        '200':
+          description: A list of terminals for the specified airport.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TerminalResponse'
+
+        '400':
+          description: Invalid IATA code.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidIATA'
+                
+        '404':
+          description: Airport not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidAirport'
+components:
+  schemas:
+    Terminal:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the terminal.
+          examples: 1, 2
+        name:
+          type: string
+          description: Name of the terminal.
+          example: McNamara Terminal, Evans Terminal 
+        location:
+          type: string
+          description: Location or description of the terminal's position.
+          examples: South Wing, North Wing
+    TerminalResponse:
+      type: object
+      properties:
+        terminals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Terminal'
+          example:
+            - id: 1
+              name: McNamara Terminal
+              location: South Wing
+            - id: 2
+              name: Evans Terminal
+              location: North Wing
+    InvalidIATA:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Invalid IATA code.
+    InvalidAirport:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Airport not found.
+    
