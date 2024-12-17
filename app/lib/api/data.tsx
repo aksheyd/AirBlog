@@ -16,7 +16,7 @@ export async function FindTerminals(reqIATA: string): Promise<NextResponse<Termi
     return NextResponse.json(terminals, { status: 200 });
 
 }
-const Airports: Record<string, AirportData> = {
+export const Airports: Record<string, AirportData> = {
     SFO: {
         name: 'San Francisco International Airport',
         terminals: [
