@@ -1,22 +1,22 @@
 import Link from 'next/link'
 import { Site } from './lib/definitions';
 
-export default function Nav() {
-    const sites: Site[] = [
-        { name: "Home", link: "/", external: false },
-        { name: "About", link: "/about", external: false },
-        { name: "Repo", link: "https://github.com/aksheyd/AirBlog", external: true },
-        { name: "API", link: "/api", external: false },
-        { name: "Login", link: "/login", external: false}
-    ]
+export const sites: Site[] = [
+    { name: "Home", link: "/", external: false },
+    { name: "About", link: "/about", external: false },
+    { name: "Repo", link: "https://github.com/aksheyd/AirBlog", external: true },
+    { name: "API", link: "/api", external: true },
+    { name: "Login", link: "/login", external: false}
+]
 
+export default function Nav() {
     return (
         <nav className="top-0 w-full bg-black py-2 text-white">
             <ul className="flex justify-around">
                 {sites.map(site => (
                     <li 
                     key={site.name}
-                    className="mr-5"
+                    className="mr-5 transition-all duration-700 ease-in-out origin-center inline-block hover:scale-110"
                     >
                         <Link
                             href={site.link}
