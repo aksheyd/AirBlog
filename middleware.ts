@@ -1,6 +1,6 @@
-import { NextFetchEvent, NextRequest, NextResponse } from 'next/server'
-import { NextRequestWithAuth, withAuth } from "next-auth/middleware"
-import { auth } from './app/actions/auth';
+import { NextRequest, NextResponse } from 'next/server'
+// import { NextRequestWithAuth, withAuth } from "next-auth/middleware"
+// import { auth } from './app/actions/auth';
 
 
 const corsOptions = {
@@ -19,23 +19,23 @@ function customMiddleware(request: NextRequest) {
 }
 
 
-export default async function middleware(request: NextRequest, event: NextFetchEvent) {
-  if (!request.nextUrl.pathname.startsWith('/api') &&
-    (request.nextUrl.pathname.startsWith('/create_post') &&
-      request.nextUrl.pathname.startsWith('/browse'))) {
+export default function middleware(request: NextRequest) {
+  // if (!request.nextUrl.pathname.startsWith('/api') &&
+  //   (request.nextUrl.pathname.startsWith('/create_post') &&
+  //     request.nextUrl.pathname.startsWith('/browse'))) {
 
-    const authResponse = await withAuth(
-      {
-        pages: {
-          signIn: "/account",
-          signOut: "/account"
-        },
-      }
-    );
+  //   const authResponse = await withAuth(
+  //     {
+  //       pages: {
+  //         signIn: "/account",
+  //         signOut: "/account"
+  //       },
+  //     }
+  //   );
 
 
-    return await authResponse(request as NextRequestWithAuth, event);
-  }
+  //   return await authResponse(request as NextRequestWithAuth, event);
+  // }
 
   return customMiddleware(request);
 
