@@ -20,6 +20,11 @@ import type {
     //     strategy: 'jwt' as const,
     //  },
     //  secret: process.env.NEXTAUTH_SECRET,
+
+    pages: {
+        signIn: '/account',
+        signOut: '/account',
+    }
   } satisfies NextAuthOptions
   
   // Use it in server contexts

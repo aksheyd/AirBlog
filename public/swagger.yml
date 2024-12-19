@@ -5,6 +5,7 @@ info:
   version: 1.0.0
 servers:
   - url: https://air-blog-psi.vercel.app/api/v1
+  # - url: http://localhost:3000/api/v1
 paths:
   /airports/{IATA}/terminals:
     get:

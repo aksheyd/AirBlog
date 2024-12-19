@@ -1,4 +1,4 @@
-import { InvalidAirport, InvalidIATA, ErrorResponse, TerminalsResponse, AirportData } from '@/app/lib/definitions';
+import { InvalidAirport, InvalidIATA, ErrorResponse, TerminalsResponse, AirportData } from '@/app/lib/api/definitions';
 import { NextResponse } from 'next/server';
 
 export async function FindTerminals(reqIATA: string): Promise<NextResponse<TerminalsResponse | ErrorResponse>> {
@@ -16,6 +16,16 @@ export async function FindTerminals(reqIATA: string): Promise<NextResponse<Termi
     return NextResponse.json(terminals, { status: 200 });
 
 }
+
+
+// FIXME: add string input checking for safety
+function correctedString(input: string): string {
+    const res: string = input.toUpperCase()
+
+    return res
+}
+
+// FIXME: move to database
 export const Airports: Record<string, AirportData> = {
     SFO: {
         name: 'San Francisco International Airport',
@@ -53,10 +63,3 @@ export const Airports: Record<string, AirportData> = {
         ],
     },
 };
-
-function correctedString(input: string): string {
-    // FIXME: add string input checking for safety
-    const res: string = input.toUpperCase()
-
-    return res
-}
