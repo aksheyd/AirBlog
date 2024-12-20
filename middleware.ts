@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 
 const corsOptions = {
-  'Access-Control-Allow-Methods': 'GET',
+  'Access-Control-Allow-Methods': 'GET, POST',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 }
 
