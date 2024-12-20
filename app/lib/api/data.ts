@@ -1,7 +1,6 @@
 import { Airports, UnitAirport, Airport } from '@/app/lib/api/definitions';
 
-let airports: Airports = await loadAirports();
-
+const airports: Airports = await loadAirports();
 
 async function loadAirports(): Promise<Airports> {
     try {
@@ -16,7 +15,7 @@ async function loadAirports(): Promise<Airports> {
     }
 }
 
-async function saveAirports(): Promise<Boolean> {
+async function saveAirports(): Promise<boolean> {
     try {
         const response = await fetch(process.env.URL + '/api/v1/airports', {
             method: 'POST',

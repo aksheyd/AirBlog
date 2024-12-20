@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 
 const path = process.cwd() + '/app/lib/api/airports.json';
@@ -10,7 +10,7 @@ export async function GET() {
     return NextResponse.json(res);
 }
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   return NextResponse.json(
     { message: "Invalid API route, coming soon.." },
     { status: 404 }
