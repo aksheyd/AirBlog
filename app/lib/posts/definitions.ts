@@ -1,9 +1,18 @@
-export type User_Post = {
+import { UnitAirport, UnitTerminal } from "../api/definitions";
+
+export interface Post {
+    username: string; // created at random if unsupplied
+    created_at: string; // inputted on call
+    message: string;
+    airport: UnitAirport;
+    terminal: UnitTerminal;
+    rating: number;
+}
+
+export interface UnitPost extends Post {
     id: number;
-    created_at: string;
-    updated_at: string;
-    title: string;
-    content: string;
-    airport: string;
-    terminal: string;
+}
+
+export interface Posts {
+    [key: string]: UnitPost;
 }

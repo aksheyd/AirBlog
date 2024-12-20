@@ -1,26 +1,27 @@
-export type ErrorResponse = {
-    error: string
-}
-
-export const InvalidIATA: ErrorResponse = {
-    error: 'Invalid IATA code'
-}
-
-export const InvalidAirport: ErrorResponse = {
-    error: 'Airport not found'
-}
-
-
-export type Terminal = {
-    id: string;
-    name: string;
-    location: string;
+// Terminal definitions
+export interface Terminal {
+    name: string
 };
 
-export type TerminalsResponse = {
-    terminals: Terminal[];
-};
+export interface UnitTerminal extends Terminal {
+    id: number
+}
 
-export type AirportData = TerminalsResponse & {
-    name: string;
+// Airport defintions
+export interface Airport {
+    name: string,
+    iata: string,
+    coordinates: {
+        latitude: number,
+        longitude: number
+    },
+    terminals: UnitTerminal[]
+}
+
+export interface UnitAirport extends Airport {
+    id: number,
+}
+
+export interface Airports {
+    [key : string]: UnitAirport;
 };

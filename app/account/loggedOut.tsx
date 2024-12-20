@@ -9,14 +9,20 @@ export default function LoggedOutView() {
             <section className="relative z-10 flex-none">
                 <Nav />
             </section>
-            <div className="flex flex-1 items-center justify-center">
-                <div className="flex border border-transparent rounded-lg shadow-xl p-10">
+            <div className="flex items-center justify-center flex-1 p-4">
+                <div className="space-y-4 border p-6 rounded-lg shadow-md">
                     <button
-                        className="text-black bg-gray-100 hover:bg-gray-200 font-light rounded-lg text-sm px-5 py-1"
+                        className="w-full py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                         onClick={() => signIn('google')}
                     >
                         Sign in with Google
                     </button>
+
+                    <div className="block text-sm font-medium text-gray-700 text-balance">
+                        <p>Currently, there is no need to login for posting.</p>
+                        <p>You can post anonymously. Cheers!  </p>
+
+                    </div>
                 </div>
             </div>
         </div>

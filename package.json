@@ -10,12 +10,14 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.1",
+    "fs": "^0.0.1-security",
     "gsap": "^3.12.5",
     "jose": "^5.9.6",
     "next": "^15.0.4",
     "next-auth": "^4.24.11",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-simple-star-rating": "^5.1.7"
   },
   "devDependencies": {
     "@types/node": "^20",

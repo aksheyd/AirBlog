@@ -1,65 +1,70 @@
-import { InvalidAirport, InvalidIATA, ErrorResponse, TerminalsResponse, AirportData } from '@/app/lib/api/definitions';
-import { NextResponse } from 'next/server';
+import { Airports, UnitAirport, Airport } from '@/app/lib/api/definitions';
 
-export async function FindTerminals(reqIATA: string): Promise<NextResponse<TerminalsResponse | ErrorResponse>> {
-    if (reqIATA.length !== 3) {
-        return NextResponse.json(InvalidIATA, { status: 400 });
+let airports: Airports = await loadAirports();
+
+
+async function loadAirports(): Promise<Airports> {
+    try {
+        const base = process.env.NEXT_PUBLIC_URL
+        console.log(`Fetching data from ${base}/api/v1/airports`);
+        const response = await fetch(base + '/api/v1/airports');
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.log(`Error ${error}`);
+        return {};
     }
-
-    const IATA: string = correctedString(reqIATA);
-    const terminals: TerminalsResponse | undefined = Airports[IATA];
-
-    if (!terminals) {
-        return NextResponse.json(InvalidAirport, { status: 404 });
-    }
-    
-    return NextResponse.json(terminals, { status: 200 });
-
 }
 
+async function saveAirports(): Promise<Boolean> {
+    try {
+        const response = await fetch(process.env.URL + '/api/v1/airports', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(airports),
+        });
 
-// FIXME: add string input checking for safety
-function correctedString(input: string): string {
-    const res: string = input.toUpperCase()
+        if (response.ok) {
+            console.log(`Airport saved successfully!`);
+            return true;
+        } else {
+            console.log(`Error saving data: ${response.statusText}`);
+            return false;
+        }
 
-    return res
+    } catch (error) {
+        console.log(`Error saving data: ${error}`);
+        return false;
+    }
 }
 
-// FIXME: move to database
-export const Airports: Record<string, AirportData> = {
-    SFO: {
-        name: 'San Francisco International Airport',
-        terminals: [
-            { id: '1', name: 'Harvey Milk Terminal 1', location: 'North Wing' },
-            { id: '2', name: 'Terminal 2', location: 'East Wing' },
-        ],
-    },
-    LAX: {
-        name: 'Los Angeles International Airport',
-        terminals: [
-            { id: '1', name: 'Terminal 3', location: 'West Wing' },
-            { id: '2', name: 'Tom Bradley International Terminal', location: 'Central Hub' },
-        ],
-    },
-    DTW: {
-        name: 'Detroit Metropolitan Wayne County Airport',
-        terminals: [
-            { id: '1', name: 'McNamara Terminal', location: 'South Wing' },
-            { id: '2', name: 'Evans Terminal', location: 'North Wing' },
-        ],
-    },
-    JFK: {
-        name: 'John F. Kennedy International Airport',
-        terminals: [
-            { id: '1', name: 'Terminal 1', location: 'East Wing' },
-            { id: '2', name: 'Terminal 4', location: 'West Wing' },
-        ],
-    },
-    ORD: {
-        name: 'O\'Hare International Airport',
-        terminals: [
-            { id: '1', name: 'Terminal 1', location: 'North Wing' },
-            { id: '2', name: 'Terminal 5', location: 'International Wing' },
-        ],
-    },
-};
+export const findAll = async (): Promise<UnitAirport[]> => Object.values(airports);
+
+export const findOne = async (iata: string): Promise<UnitAirport> => airports[iata];
+
+export const create = async (input: Airport): Promise<UnitAirport | null> => {
+    const id = Object.keys(airports).length + 1;
+
+    const airport: UnitAirport = {
+        id: id,
+        name: input.name,
+        iata: input.iata,
+        coordinates: input.coordinates,
+        terminals: input.terminals
+    };
+
+    try {
+        airports[airport.iata] = airport;
+    } catch (error) {
+        console.log(`Error inputting data: ${error}`)
+        return null
+    }
+
+    if (await saveAirports()) {
+        return airport;
+    } 
+
+    return null
+}
