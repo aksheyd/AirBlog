@@ -1,90 +1,86 @@
 'use client';
 
-import React, { FormEvent, useState, useEffect } from "react";
 import Nav from "../nav";
-import { findAll } from "../lib/api/data";
-import { UnitAirport, UnitTerminal } from "../lib/api/definitions";
-import { Rating } from 'react-simple-star-rating'
+// import { Rating } from 'react-simple-star-rating'
 import '../star.css'
-import { Post } from "../lib/posts/definitions";
 
 
 export default function CreatePost() {
-    const [name, setName] = useState("");
-    const [message, setMessage] = useState("");
-    const [airport, setAirport] = useState<UnitAirport | undefined>();
-    const [terminal, setTerminal] = useState<UnitTerminal | undefined>();
-    const [airportOptions, setAirportOptions] = useState<UnitAirport[]>([]);
-    const [terminalOptions, setTerminalOptions] = useState<UnitTerminal[]>([]);
-    const [rating, setRating] = useState(0)
+    // const [name, setName] = useState("");
+    // const [message, setMessage] = useState("");
+    // const [airport, setAirport] = useState<UnitAirport | undefined>();
+    // const [terminal, setTerminal] = useState<UnitTerminal | undefined>();
+    // const [airportOptions, setAirportOptions] = useState<UnitAirport[]>([]);
+    // const [terminalOptions, setTerminalOptions] = useState<UnitTerminal[]>([]);
+    // const [rating, setRating] = useState(0)
 
 
-    // Catch Rating value
-    const handleRating = (rate: number) => {
-        setRating(rate)
-    }
+    // // Catch Rating value
+    // const handleRating = (rate: number) => {
+    //     setRating(rate)
+    // }
 
-    // Fetch airports on mount
-    useEffect(() => {
-        const fetchAirports = async () => {
-            const airports = await findAll();
-            setAirportOptions(airports);
-        };
-        fetchAirports();
-    }, []);
+    // // Fetch airports on mount
+    // useEffect(() => {
+    //     const fetchAirports = async () => {
+    //         const airports = await findAll();
+    //         setAirportOptions(airports);
+    //     };
+    //     fetchAirports();
+    // }, []);
 
-    // Fetch terminals whenever `airport` changes
-    useEffect(() => {
-        if (airport) {
-            setTerminalOptions(airport.terminals);
-        } else {
-            setTerminalOptions([]);
-        }
-    }, [airport]);
+    // // Fetch terminals whenever `airport` changes
+    // useEffect(() => {
+    //     if (airport) {
+    //         setTerminalOptions(airport.terminals);
+    //     } else {
+    //         setTerminalOptions([]);
+    //     }
+    // }, [airport]);
 
-    const handleSubmit = async (event: FormEvent) => {
-        event.preventDefault();
+    // const handleSubmit = async (event: FormEvent) => {
+    //     event.preventDefault();
 
-        if (!airport || !terminal ) {
-            alert("Please select an airport and/or terminal");
-            return;
-        }
+    //     if (!airport || !terminal ) {
+    //         alert("Please select an airport and/or terminal");
+    //         return;
+    //     }
 
-        // Log form data (example)
-        console.log({ name, message, airport, terminal, rating });
+    //     // Log form data (example)
+    //     console.log({ name, message, airport, terminal, rating });
 
-        const formPost: Post = {
-            username: name ? name : "Anonymous",
-            message: message,
-            airport: airport,
-            terminal: terminal,
-            rating: rating,
-            created_at: new Date().toISOString(),
-        }
+    //     const formPost: Post = {
+    //         username: name ? name : "Anonymous",
+    //         message: message,
+    //         airport: airport,
+    //         terminal: terminal,
+    //         rating: rating,
+    //         created_at: new Date().toISOString(),
+    //     }
 
-        // Send form data to server
-        const url = process.env.NEXT_PUBLIC_URL
-        const response = await fetch(url + "/api/v1/posts", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formPost),
-        })
+    //     // Send form data to server
+    //     const url = process.env.NEXT_PUBLIC_URL
+    //     const response = await fetch(url + "/api/v1/posts", {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //         },
+    //         body: JSON.stringify(formPost),
+    //     })
 
-        if (!response.ok) {
-            alert("Failed to upload post, please try again. If the issue persists, gg");
-            return;
-        }
+    //     if (!response.ok) {
+    //         alert("Failed to upload post, please try again. If the issue persists, gg");
+    //         return;
+    //     }
 
-        // Reset form fields
-        setName("");
-        setMessage("");
-        setAirport(undefined);
-        setRating(0);
+    //     // Reset form fields
+    //     setName("");
+    //     setMessage("");
+    //     setAirport(undefined);
+    //     setRating(0);
 
-        alert("Post uploaded!");
-    };
+    //     alert("Post uploaded!");
+    // };
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -94,12 +90,18 @@ export default function CreatePost() {
             </header>
 
             {/* Main Content */}
-            <main className="flex-grow flex items-center justify-center p-6">
+            Hello
+        </div>
+    );
+}
+
+/*
+<main className="flex-grow flex items-center justify-center p-6">
                 <form
                     onSubmit={handleSubmit}
                     className="bg-white border border-gray-300 rounded-lg shadow-lg p-8 w-full max-w-md space-y-6"
                 >
-                    {/* Username Input */}
+                    // username inpout
                     <div>
                         <label htmlFor="name" className="block text-sm font-semibold text-gray-700">
                             Username (optional)
@@ -114,7 +116,7 @@ export default function CreatePost() {
                         />
                     </div>
 
-                    {/* Airport Selection */}
+                    // Airport Selection
                     <div>
                         <label htmlFor="airport" className="block text-sm font-semibold text-gray-700">
                             Select Airport
@@ -138,7 +140,7 @@ export default function CreatePost() {
                         </select>
                     </div>
 
-                    {/* Terminal Selection */}
+                    // Terminal Selection
                     <div>
                         <label htmlFor="terminal" className="block text-sm font-semibold text-gray-700">
                             Select Terminal
@@ -165,7 +167,7 @@ export default function CreatePost() {
                         </select>
                     </div>
 
-                    {/* Rating Section */}
+                    {/* Rating Section 
                     <div>
                         <label htmlFor="rating" className="block text-sm font-semibold text-gray-700">
                             Rating
@@ -185,7 +187,7 @@ export default function CreatePost() {
                         </div>
                     </div>
 
-                    {/* Message Input */}
+                    {/* Message Input 
                     <div>
                         <label htmlFor="message" className="block text-sm font-semibold text-gray-700">
                             Message (optional)
@@ -199,7 +201,7 @@ export default function CreatePost() {
                         />
                     </div>
 
-                    {/* Submit Button */}
+                    {/* Submit Button 
                     <div>
                         <button
                             type="submit"
@@ -210,6 +212,4 @@ export default function CreatePost() {
                     </div>
                 </form>
             </main>
-        </div>
-    );
-}
+    */
