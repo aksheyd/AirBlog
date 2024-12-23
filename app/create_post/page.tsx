@@ -1,140 +1,215 @@
 'use client';
-import {  FormEvent, useState } from 'react'
-import './post.css'
-// import { Airports } from '../lib/api/data';
+
+import React, { FormEvent, useState, useEffect } from "react";
+import Nav from "../nav";
+import { findAll } from "../lib/api/data";
+import { UnitAirport, UnitTerminal } from "../lib/api/definitions";
+import { Rating } from 'react-simple-star-rating'
+import '../star.css'
+import { Post } from "../lib/posts/definitions";
+
 
 export default function CreatePost() {
-    const [formSubmitted, setFormSubmitted] = useState(false);
-    const [formSending, setFormSending] = useState(false);
-    const [formError, setFormError] = useState(false);
+    const [name, setName] = useState("");
+    const [message, setMessage] = useState("");
+    const [airport, setAirport] = useState<UnitAirport | undefined>();
+    const [terminal, setTerminal] = useState<UnitTerminal | undefined>();
+    const [airportOptions, setAirportOptions] = useState<UnitAirport[]>([]);
+    const [terminalOptions, setTerminalOptions] = useState<UnitTerminal[]>([]);
+    const [rating, setRating] = useState(0)
 
-    
-    async function onSubmit(event: FormEvent<HTMLFormElement>) {
-        // reset form state
-        setFormError(false);
-        setFormSubmitted(false);
 
-        setFormSending(true);
-        event.preventDefault()
-
-        const formData = new FormData(event.currentTarget)
-        try {
-            const response = await fetch('', {
-                method: 'POST',
-                body: formData,
-            })
-            setFormSending(false);
-
-            if (!response.ok) {
-                setFormError(true);
-            } else {
-                setFormSubmitted(true);
-            }
-        } catch (error) {
-            console.log(error)
-            setFormSubmitted(false)
-            setFormSending(false)
-            setFormError(true)
-            return
-        }
+    // Catch Rating value
+    const handleRating = (rate: number) => {
+        setRating(rate)
     }
 
+    // Fetch airports on mount
+    useEffect(() => {
+        const fetchAirports = async () => {
+            const airports = await findAll();
+            setAirportOptions(airports);
+        };
+        fetchAirports();
+    }, []);
+
+    // Fetch terminals whenever `airport` changes
+    useEffect(() => {
+        if (airport) {
+            setTerminalOptions(airport.terminals);
+        } else {
+            setTerminalOptions([]);
+        }
+    }, [airport]);
+
+    const handleSubmit = async (event: FormEvent) => {
+        event.preventDefault();
+
+        if (!airport || !terminal ) {
+            alert("Please select an airport and/or terminal");
+            return;
+        }
+
+        // Log form data (example)
+        console.log({ name, message, airport, terminal, rating });
+
+        const formPost: Post = {
+            username: name ? name : "Anonymous",
+            message: message,
+            airport: airport,
+            terminal: terminal,
+            rating: rating,
+            created_at: new Date().toISOString(),
+        }
+
+        // Send form data to server
+        const url = process.env.NEXT_PUBLIC_URL
+        const response = await fetch(url + "/api/v1/posts", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formPost),
+        })
+
+        if (!response.ok) {
+            alert("Failed to upload post, please try again. If the issue persists, gg");
+            return;
+        }
+
+        // Reset form fields
+        setName("");
+        setMessage("");
+        setAirport(undefined);
+        setRating(0);
+
+        alert("Post uploaded!");
+    };
+
     return (
-        <div id="create_post" className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8 items-center justify-center">
-            <div className="mx-auto text-center">
-                <h2 className="text-balance text-5xl font-semibold text-gray-900 sm:text-5xl">
-                    Create Post
-                </h2>
-            </div>
-            <form onSubmit={onSubmit} className="mx-auto mt-16 max-w-xl sm:mt-20 tracking-wider">
-                <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+            {/* Navigation Section */}
+            <header className="bg-white shadow">
+                <Nav />
+            </header>
+
+            {/* Main Content */}
+            <main className="flex-grow flex items-center justify-center p-6">
+                <form
+                    onSubmit={handleSubmit}
+                    className="bg-white border border-gray-300 rounded-lg shadow-lg p-8 w-full max-w-md space-y-6"
+                >
+                    {/* Username Input */}
                     <div>
-                        <label htmlFor="name" className="block text-lg font-light">
-                            Username (Optional)
+                        <label htmlFor="name" className="block text-sm font-semibold text-gray-700">
+                            Username (optional)
                         </label>
-                        <div className="mt-2.5">
-                            <input
-                                id="name"
-                                name="name"
-                                type="text"
-                                autoComplete="username"
-                                className="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900"
+                        <input
+                            id="name"
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Enter your name"
+                            className="mt-2 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                    </div>
+
+                    {/* Airport Selection */}
+                    <div>
+                        <label htmlFor="airport" className="block text-sm font-semibold text-gray-700">
+                            Select Airport
+                        </label>
+                        <select
+                            id="airport"
+                            value={airport?.iata || ""}
+                            onChange={(e) =>
+                                setAirport(airportOptions.find((a) => a.iata === e.target.value))
+                            }
+                            className="mt-2 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                            <option value="" disabled>
+                                Select an airport
+                            </option>
+                            {airportOptions.map((airport) => (
+                                <option key={airport.id} value={airport.iata}>
+                                    {airport.name} ({airport.iata})
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Terminal Selection */}
+                    <div>
+                        <label htmlFor="terminal" className="block text-sm font-semibold text-gray-700">
+                            Select Terminal
+                        </label>
+                        <select
+                            id="terminal"
+                            disabled={!terminalOptions.length}
+                            onChange={(e) =>
+                                setTerminal(terminalOptions.find((a) => a.name === e.target.value))
+                            }
+                            className={`mt-2 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500 ${!terminalOptions.length ? "bg-gray-100 cursor-not-allowed" : ""
+                                }`}
+                        >
+                            <option value="" disabled>
+                                {terminalOptions.length
+                                    ? "Select a terminal"
+                                    : "No terminals available"}
+                            </option>
+                            {terminalOptions.map((terminal) => (
+                                <option key={terminal.id} value={terminal.name}>
+                                    {terminal.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Rating Section */}
+                    <div>
+                        <label htmlFor="rating" className="block text-sm font-semibold text-gray-700">
+                            Rating
+                        </label>
+                        <div className="mt-2 flex space-x-2">
+                            <Rating
+                                onClick={handleRating}
+                                initialValue={rating}
+                                fillColorArray={[
+                                    '#ff3c00',
+                                    '#f16c45',
+                                    '#f7ac7d',
+                                    '#c8db3a',
+                                    '#59f145'
+                                  ]}
                             />
                         </div>
                     </div>
-                    <div className="sm:col-span-2">
-                        <label htmlFor="airport" className="block text-lg font-light">
-                            Airport
-                        </label>
-                        <div className="mt-2.5">
-                            <select
-                                id="airport"
-                                name="airport"
-                                // onSelect={}
-                                defaultValue="---"
-                                className="block w-full rounded-md bg-white px-3.5 py-2 text-base tracking-wider text-gray-900"
-                            >
-                                <option>---</option>
-                                <option>SFO</option>
-                                <option>CDG</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div className="sm:col-span-2">
-                        <label htmlFor="email" className="block text-lg font-light tracking-wider">
-                            Email
-                        </label>
-                        <div className="mt-2.5">
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                autoComplete="email"
-                                className="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900"
-                            />
-                        </div>
-                    </div>
-                    <div className="sm:col-span-2">
-                        <label htmlFor="message" className="block text-lg font-light">
-                            Message
-                        </label>
-                        <div className="mt-2.5">
-                            <textarea
-                                id="message"
-                                name="message"
-                                rows={4}
-                                className="block w-full rounded-lg bg-white px-3.5 py-2 text-base text-gray-900"
-                                defaultValue={''}
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div className="mt-10">
-                    <button
-                        type="submit"
-                        className="block w-full rounded-md bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 px-3.5 py-2.5 text-center text-md tracking-wider font-regular shadow-sm hover:from-indigo-200 hover:via-purple-200 hover:to-pink-200">
-                        Send
-                    </button>
-                </div>
-            </form>
 
-            {formError && (
-                <div className="mt-8 text-center text-red-600 text-lg">
-                    There was an error sending your message. Please try again.
-                </div>
-            )}
+                    {/* Message Input */}
+                    <div>
+                        <label htmlFor="message" className="block text-sm font-semibold text-gray-700">
+                            Message (optional)
+                        </label>
+                        <textarea
+                            id="message"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            placeholder="Enter your message"
+                            className="mt-2 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                    </div>
 
-            {formSending && (
-                <div className="mt-8 text-center text-gray-600 text-lg">
-                    Sending...
-                </div>
-            )}
-
-            {formSubmitted && (
-                <div className="mt-8 text-center text-green-600 text-lg">
-                    Thank you! Your message has been sent.
-                </div>
-            )}
+                    {/* Submit Button */}
+                    <div>
+                        <button
+                            type="submit"
+                            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors duration-300"
+                        >
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </main>
         </div>
-    )
+    );
 }

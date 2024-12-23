@@ -1,5 +1,9 @@
 import type { NextConfig } from "next";
 
+const dotenvExpand = require("dotenv-expand");
+
+dotenvExpand.expand({ parsed: { ...process.env } });
+
 const nextConfig: NextConfig = {
   /* config options here */
   images : {

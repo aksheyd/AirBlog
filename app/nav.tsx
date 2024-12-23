@@ -3,10 +3,11 @@ import { Site } from './lib/definitions';
 
 export const sites: Site[] = [
     { name: "Home", link: "/", external: false },
+    { name: "Browse", link: "/browse", external: false },
     { name: "About", link: "/about", external: false },
     { name: "Repo", link: "https://github.com/aksheyd/AirBlog", external: true },
     { name: "API", link: "/api", external: true },
-    { name: "Login", link: "/login", external: false}
+    { name: "Account", link: "/account", external: false}
 ]
 
 export default function Nav() {
